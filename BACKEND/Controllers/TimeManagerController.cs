@@ -24,6 +24,8 @@ namespace BACKEND.Controllers
 
             int currentDay = 1;
             int currentHour = 7; // 8-tól 17-ig tart a munkaidő, mivel mindig van egy óra szünet a feladatok között
+            bool daysGoingForward = true;
+            bool allDaysFull = false;
 
             for (int i = 0; i < sortedItems.Count; i++)
             {
@@ -40,6 +42,23 @@ namespace BACKEND.Controllers
                     EndHour = currentHour + sortedItems[i].Duration + 1
                 });
 
+                // Új napra lépés
+                if (daysGoingForward && currentDay < daysToComplete)
+                {
+                    currentDay++;
+                }
+                else if (daysGoingForward && currentDay == daysToComplete)
+                {
+                    daysGoingForward = false;
+                }
+                else if (!daysGoingForward && currentDay > 1)
+                {
+                    currentDay--;
+                }
+                else if (!daysGoingForward && currentDay == 1)
+                {
+                    daysGoingForward = true;
+                }
             }
 
             return schedule;
