@@ -21,9 +21,9 @@ namespace BACKEND.Controllers
             List<TimeManagerModels.TaskItem> sortedItems = items.OrderByDescending(x => x.Duration).ToList();
 
             int[] separateDayClocks = new int[daysToComplete]; // Az egyes napokon eltöltött órák számát tárolja
-            foreach (var clock in separateDayClocks)
+            for (int i = 0; i < separateDayClocks.Length; i++)
             {
-                separateDayClocks[clock] = 7; // 8-tól 17-ig tart a munkaidő, mivel mindig van egy óra szünet a feladatok között
+                separateDayClocks[i] = 7; // 8-tól 17-ig tart a munkaidő, mivel mindig van egy óra szünet a feladatok között
             }
             int currentDay = 1;
             const int maxHours = 17;
@@ -31,8 +31,9 @@ namespace BACKEND.Controllers
 
             for (int i = 0; i < sortedItems.Count; i++)
             {
+                bool isItemPlaced = false;
                 bool[] isDayFull = new bool[daysToComplete]; // Az egyes napokon a munkaidő betelt-e, mindig az aktuális feladatnál újra inicializáljuk, mivel lehet, hogy a következő feladat kisebb lesz
-                while (!isDayFull.All(x => x == true))
+                while (!isDayFull.All(x => x == true) && !isItemPlaced)
                 {
                     if (sortedItems[i].Duration + 1 + separateDayClocks[currentDay - 1] < maxHours)
                     {
@@ -45,6 +46,7 @@ namespace BACKEND.Controllers
                             EndHour = separateDayClocks[currentDay - 1] + sortedItems[i].Duration + 1
                         });
                         separateDayClocks[currentDay - 1] += sortedItems[i].Duration + 1;
+                        isItemPlaced = true;
                     }
                     else
                     {
