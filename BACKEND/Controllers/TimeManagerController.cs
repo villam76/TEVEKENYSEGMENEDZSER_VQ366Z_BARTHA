@@ -1,7 +1,5 @@
 ﻿using BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace BACKEND.Controllers
 {
@@ -20,44 +18,56 @@ namespace BACKEND.Controllers
         {
             List<TimeManagerModels.ScheduledTask> schedule = new List<TimeManagerModels.ScheduledTask>();
 
-            List<TimeManagerModels.TaskItem> sortedItems = items.OrderBy(x => x.Duration).ToList();
+            List<TimeManagerModels.TaskItem> sortedItems = items.OrderByDescending(x => x.Duration).ToList();
 
+            int[] separateDayClocks = new int[daysToComplete]; // Az egyes napokon eltöltött órák számát tárolja
+            foreach (var clock in separateDayClocks)
+            {
+                separateDayClocks[clock] = 7; // 8-tól 17-ig tart a munkaidő, mivel mindig van egy óra szünet a feladatok között
+            }
             int currentDay = 1;
-            int currentHour = 7; // 8-tól 17-ig tart a munkaidő, mivel mindig van egy óra szünet a feladatok között
+            const int maxHours = 17;
             bool daysGoingForward = true;
-            bool allDaysFull = false;
 
             for (int i = 0; i < sortedItems.Count; i++)
             {
-                while (true)
+                bool[] isDayFull = new bool[daysToComplete]; // Az egyes napokon a munkaidő betelt-e, mindig az aktuális feladatnál újra inicializáljuk, mivel lehet, hogy a következő feladat kisebb lesz
+                while (!isDayFull.All(x => x == true))
                 {
-                    break; //TODO!!!
-                }
-                // Ütemezett feladat létrehozása
-                schedule.Add(new TimeManagerModels.ScheduledTask
-                {
-                    Name = sortedItems[i].Name,
-                    Day = currentDay,
-                    StartHour = currentHour + 1,
-                    EndHour = currentHour + sortedItems[i].Duration + 1
-                });
+                    if (sortedItems[i].Duration + 1 + separateDayClocks[currentDay - 1] < maxHours)
+                    {
+                        // Ütemezett feladat létrehozása
+                        schedule.Add(new TimeManagerModels.ScheduledTask
+                        {
+                            Name = sortedItems[i].Name,
+                            Day = currentDay,
+                            StartHour = separateDayClocks[currentDay - 1] + 1,
+                            EndHour = separateDayClocks[currentDay - 1] + sortedItems[i].Duration + 1
+                        });
+                        separateDayClocks[currentDay - 1] += sortedItems[i].Duration + 1;
+                    }
+                    else
+                    {
+                        isDayFull[currentDay - 1] = true;
+                    }
 
-                // Új napra lépés
-                if (daysGoingForward && currentDay < daysToComplete)
-                {
-                    currentDay++;
-                }
-                else if (daysGoingForward && currentDay == daysToComplete)
-                {
-                    daysGoingForward = false;
-                }
-                else if (!daysGoingForward && currentDay > 1)
-                {
-                    currentDay--;
-                }
-                else if (!daysGoingForward && currentDay == 1)
-                {
-                    daysGoingForward = true;
+                    // Új napra lépés
+                    if (daysGoingForward && currentDay < daysToComplete)
+                    {
+                        currentDay++;
+                    }
+                    else if (daysGoingForward && currentDay == daysToComplete)
+                    {
+                        daysGoingForward = false;
+                    }
+                    else if (!daysGoingForward && currentDay > 1)
+                    {
+                        currentDay--;
+                    }
+                    else if (!daysGoingForward && currentDay == 1)
+                    {
+                        daysGoingForward = true;
+                    }
                 }
             }
 
