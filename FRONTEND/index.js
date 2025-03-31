@@ -4,6 +4,7 @@ const durationInput = document.getElementById("newtaskduration");
 const taskList = document.getElementById("taskList");
 const submitContainer = document.getElementById("submitContainer");
 let submitButton = null;
+let tasks = [];
 
 
 addButton.addEventListener("click", function () {
@@ -30,11 +31,14 @@ addButton.addEventListener("click", function () {
     deleteButton.innerText = "Törlés";
     deleteButton.addEventListener("click", function () {
         li.remove();
+        tasks = tasks.filter(task => task.name !== taskName);
         checkList();
     });
     li.appendChild(deleteButton);
 
     taskList.appendChild(li);
+
+    tasks.push({ name: taskName, duration: taskDuration });
 
     taskInput.value = "";
     durationInput.value = "";
@@ -58,6 +62,15 @@ function checkList() {
                         alert("Érvényes számot adj meg!");
                         return;
                     }
+
+                    fetch("http://localhost:5063/api/timemanager", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ items: tasks, daysToComplete: days })
+                    }).then(response => response.json())
+                      .then(schedule => console.log("Ütemezés:", schedule));
 
                 taskList.innerHTML = ""; 
                 submitButton.remove(); 
