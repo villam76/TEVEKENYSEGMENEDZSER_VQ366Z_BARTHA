@@ -2,6 +2,8 @@ const addButton = document.getElementById("addTaskButton");
 const taskInput = document.getElementById("newtask");
 const durationInput = document.getElementById("newtaskduration");
 const taskList = document.getElementById("taskList");
+const submitContainer = document.getElementById("submitContainer");
+let submitButton = null;
 
 
 addButton.addEventListener("click", function () {
@@ -28,6 +30,7 @@ addButton.addEventListener("click", function () {
     deleteButton.innerText = "Törlés";
     deleteButton.addEventListener("click", function () {
         li.remove();
+        checkList();
     });
     li.appendChild(deleteButton);
 
@@ -35,4 +38,25 @@ addButton.addEventListener("click", function () {
 
     taskInput.value = "";
     durationInput.value = "";
+
+    checkList();
 });
+
+function checkList() {
+    if (taskList.children.length > 0) {
+        if (!submitButton) {
+            submitButton = document.createElement("button");
+            submitButton.classList.add("btn", "btn-success", "mt-3");
+            submitButton.innerText = "Beosztás Generálása";
+            submitButton.addEventListener("click", function () {
+                taskList.innerHTML = ""; 
+                submitButton.remove(); 
+                submitButton = null;
+            });
+            submitContainer.appendChild(submitButton);
+        }
+    } else if (submitButton) {
+        submitButton.remove();
+        submitButton = null;
+    }
+}
