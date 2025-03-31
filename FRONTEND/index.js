@@ -13,6 +13,15 @@ addButton.addEventListener("click", function () {
         const li = document.createElement("li");
         li.classList.add("list-group-item", "d-flex");
         li.innerHTML = `<span>${taskName} - ${taskDuration} óra</span>`;
+        
+        const deleteButton = document.createElement("button");
+        deleteButton.classList.add("btn", "btn-danger", "ms-auto");
+        deleteButton.innerText = "Törlés";
+        deleteButton.addEventListener("click", function () {
+            li.remove();
+        });
+        li.appendChild(deleteButton);
+
         taskList.appendChild(li);
     } else {
         //TODO: Hibaüzenet megjelenítése, ha a mezők üresek
