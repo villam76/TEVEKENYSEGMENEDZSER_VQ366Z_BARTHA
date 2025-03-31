@@ -23,7 +23,10 @@ addButton.addEventListener("click", function () {
         li.appendChild(deleteButton);
 
         taskList.appendChild(li);
+
+        taskInput.value = "";
+        durationInput.value = "";
     } else {
-        //TODO: Hibaüzenet megjelenítése, ha a mezők üresek
+        alert("Kérlek töltsd ki a feladat nevét és időtartamát!");
     }
 });
