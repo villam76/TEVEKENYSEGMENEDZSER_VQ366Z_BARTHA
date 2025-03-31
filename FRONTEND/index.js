@@ -49,9 +49,20 @@ function checkList() {
             submitButton.classList.add("btn", "btn-success", "mt-3");
             submitButton.innerText = "Beosztás Generálása";
             submitButton.addEventListener("click", function () {
+                const daysToComplete = prompt("Hány nap alatt szeretnéd teljesíteni?");
+
+                if (daysToComplete !== null) {
+                    const days = parseInt(daysToComplete, 10);
+                    
+                    if (isNaN(days) || days < 1) {
+                        alert("Érvényes számot adj meg!");
+                        return;
+                    }
+
                 taskList.innerHTML = ""; 
                 submitButton.remove(); 
                 submitButton = null;
+                }
             });
             submitContainer.appendChild(submitButton);
         }
