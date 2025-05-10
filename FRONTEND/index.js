@@ -117,7 +117,7 @@ function generateScheduleTable(schedule) {
 
     const tbody = document.createElement('tbody');
 
-    for (let hour = 7; hour <= 17; hour++) {
+    for (let hour = 8; hour <= 15; hour++) {
         const row = document.createElement('tr');
         row.innerHTML = `<td>${hour}:00</td>`;
 
