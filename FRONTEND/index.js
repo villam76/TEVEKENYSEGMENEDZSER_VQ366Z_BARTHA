@@ -75,7 +75,8 @@ function checkList() {
                         generateScheduleTable(schedule);
                     });
 
-                taskList.innerHTML = ""; 
+                taskList.innerHTML = "";
+                tasks = [];
                 submitButton.remove(); 
                 submitButton = null;
                 }
